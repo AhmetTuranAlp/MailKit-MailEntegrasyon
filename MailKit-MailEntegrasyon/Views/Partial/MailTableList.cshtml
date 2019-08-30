@@ -1,0 +1,101 @@
+﻿@model List<MailKit_Core.MailRepository.EnvelopeEmail>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="btn-toolbar" role="toolbar">
+            <div class="btn-group">
+                <button type="button" class="btn btn-success"><i class="fa fa-inbox"></i></button>
+                <button type="button" class="btn btn-success"><i class="fa fa-exclamation-circle"></i></button>
+                <button type="button" class="btn btn-success"><i class="fa fa-trash-o"></i></button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="panel panel-default m-t-20">
+    <div class="panel-body">
+        <table class="table table-hover mails">
+            <tbody>
+                @{
+                    for (int i = 0; i < Model.Count; i++)
+                    {
+                        string dateString = "";
+                        if (Model[i].TimeReceived.Year != DateTime.Now.Year)
+                        {
+                            //farklı yıl
+                            dateString = Model[i].TimeReceived.ToShortDateString();
+                        }
+                        else
+                        {
+                            if (Model[i].TimeReceived.Day == DateTime.Now.Day)
+                            {
+                                //aynı gün
+                                dateString = Model[i].TimeReceived.ToString("hh:mm");
+                            }
+                            else
+                            {
+                                //farklı gün aynı yıl
+                                dateString = Model[i].TimeReceived.ToString("dd MMMM");
+                            }
+                        }
+
+                        <tr>
+                            <td class="mail-select">
+                                <label class="cr-styled">
+                                    <input type="checkbox"><i class="fa"></i>
+                                </label>
+                            </td>
+                            <td class="mail-rateing">
+                                @if (Model[i].MessageFlags.Value.HasFlag(MailKit.MessageFlags.Flagged))
+                                {
+                                    <a><i class="fa fa-star" style="color:orange"></i></a>
+
+                                }
+                                else
+                                {
+                                    <a><i class="fa fa-star"></i></a>
+                                }
+
+                            </td>
+                            <td onclick="Details('@Model[i].Uid')">
+                                @if (Model[i].MessageFlags.Value.HasFlag(MailKit.MessageFlags.Seen))
+                                {
+                                    <a href="#">@Model[i].Subject</a>
+                                }
+                                else
+                                {
+                                    <strong><a href="#">@Model[i].Subject</a></strong>
+                                }
+
+                            </td>
+                            <td class="text-right">
+                                @dateString
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        <hr>
+        <div class="row">
+            <div class="col-xs-7">
+                Showing 1 - 20 of 289
+            </div>
+            <div class="col-xs-5">
+                <div class="btn-group pull-right">
+                    <button type="button" class="btn btn-default"><i class="fa fa-chevron-left"></i></button>
+                    <button type="button" class="btn btn-default"><i class="fa fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    function Details(id) {
+        window.location.href = "/Login/MailDetails?mailId=" + id;
+    }
+</script>
